@@ -7,6 +7,9 @@ import (
 
 type Store interface {
 	GetComment(context.Context, string) (Comment, error)
+	PostComment(context.Context, Comment) (Comment, error)
+	UpdateComment(context.Context, string, Comment) (Comment, error)
+	DeleteComment(context.Context, string) error
 }
 
 type Comment struct {
@@ -35,4 +38,16 @@ func (s *Service) GetComment(ctx context.Context, id string) (Comment, error) {
 	}
 
 	return cmt, nil
+}
+
+func (s *Service) UpdateComment(ctx context.Context, id string) error {
+	return nil
+}
+
+func (s *Service) DeleteComment(ctx context.Context, id string) error {
+	return nil
+}
+
+func (s *Service) CreateComment(ctx context.Context, cmt Comment) (Comment, error) {
+	return Comment{}, nil
 }
