@@ -7,6 +7,7 @@ import (
 
 	"github.com/co-codin/service-layer/internal/comment"
 	"github.com/co-codin/service-layer/internal/db"
+	transportHttp "github.com/co-codin/service-layer/internal/transport/http"
 	"github.com/joho/godotenv"
 )
 
@@ -31,11 +32,13 @@ func Run() error {
 		return err
 	}
 
-	// cmtService := comment.NewService(db)
+	cmtService := comment.NewService(db)
 
-	// cmtService.Store.PostComment(
-	// 	context.Background()
-	// )
+	httpHandler := transportHttp.NewHandler(cmtService)
+
+	if err := httpHandler.Serve(); err != nil {
+		return err
+	}
 
 	if err := db.Ping(context.Background()); err != nil {
 		return err
