@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/co-codin/service-layer/internal/comment"
+	uuid "github.com/satori/go.uuid"
 )
 
 type CommentRow struct {
@@ -17,10 +18,10 @@ type CommentRow struct {
 
 func convertCommentRowToComment(c CommentRow) comment.Comment {
 	return comment.Comment{
-		ID: c.ID,
-		Slug: c.Slug.String,
+		ID:     c.ID,
+		Slug:   c.Slug.String,
 		Author: c.Author.String,
-		Body: c.Body.String,
+		Body:   c.Body.String,
 	}
 }
 
@@ -40,4 +41,37 @@ func (d *Database) GetComment(ctx context.Context, uuid string) (comment.Comment
 	}
 
 	return convertCommentRowToComment(cmtRow), nil
+}
+
+func (d *Database) PostComment(ctx context.Context, cmt comment.Comment) (comment.Comment, error) {
+	cmt.ID = uuid.NewV4().String()
+	postRow := CommentRow{
+		ID:     cmt.ID,
+		Slug:   sql.NullString{String: cmt.Slug, Valid: true},
+		Author: sql.NullString{String: cmt.Slug, Valid: true},
+		Body:   sql.NullString{String: cmt.Slug, Valid: true},
+	}
+
+	rows, err := d.Client.NamedQueryContext(
+		ctx,
+		`INSERT INTO comments 
+		(id, slug, author, body) 
+		VALUES 
+		(:id, :slug, :author, :body)`,
+		postRow,
+	)
+
+	if err != nil {
+		return comment.Comment{}, fmt.Errorf("failed to insert comment: %w", err)
+	}
+
+	if err := rows.Close(); err != nil {
+		return comment.Comment{}, fmt.Errorf("failed to close rows: %w", err)
+	}
+
+	return cmt, nil
+}
+
+func (d *Database) DeleteComment(ctx context.Context, id string) error {
+	
 }

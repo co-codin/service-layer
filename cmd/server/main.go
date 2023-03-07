@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/co-codin/service-layer/internal/comment"
 	"github.com/co-codin/service-layer/internal/db"
 	"github.com/joho/godotenv"
 )
@@ -29,6 +30,12 @@ func Run() error {
 		fmt.Println("failed to migrate database.")
 		return err
 	}
+
+	// cmtService := comment.NewService(db)
+
+	// cmtService.Store.PostComment(
+	// 	context.Background()
+	// )
 
 	if err := db.Ping(context.Background()); err != nil {
 		return err
