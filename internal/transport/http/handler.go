@@ -32,7 +32,7 @@ func NewHandler(servie CommentService) *Handler {
 }
 
 func (h *Handler) mapRoutes() {
-	h.Router.handlerFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+	h.Router.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "hello world")
 	})
 }
