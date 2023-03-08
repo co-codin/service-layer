@@ -26,6 +26,9 @@ func NewHandler(servie CommentService) *Handler {
 
 	h.mapRoutes()
 
+	h.Router.Use(JSONMiddle)
+	h.Router.Use(LoggingMiddleware)
+
 	h.Server = &http.Server{
 		Addr:    "0.0.0.0:8080",
 		Handler: h.Router,
