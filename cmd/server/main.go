@@ -32,9 +32,9 @@ func Run() error {
 		return err
 	}
 
-	cmtService := comment.NewService(db)
+	commentService := comment.NewService(db)
 
-	httpHandler := transportHttp.NewHandler(cmtService)
+	httpHandler := transportHttp.NewHandler(commentService)
 
 	if err := httpHandler.Serve(); err != nil {
 		return err

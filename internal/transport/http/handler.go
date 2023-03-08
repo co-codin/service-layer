@@ -12,8 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type CommentService interface{}
-
 type Handler struct {
 	Router  *mux.Router
 	Service CommentService
