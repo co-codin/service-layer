@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/co-codin/service-layer/internal/comment"
 )
@@ -72,14 +73,40 @@ func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
-	var cmt comment.Comment
+type PostCommentRequest struct {
+	Slug   string `json:"slug" validate:"required"`
+	Author string `json:"author" validate:"required"`
+	Body   string `json:"body" validate:"required"`
+}
 
-	if err := json.NewDecoder(r.Body).Decode(&cmt); err != nil {
+func commentFromPostCommentRequest(u PostCommentRequest) comment.Comment {
+	return comment.Comment{
+		Slug:   u.Slug,
+		Author: u.Author,
+		Body:   u.Body,
+	}
+}
+
+func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
+	var postCmtReq PostCommentRequest
+
+
+	if err := json.NewDecoder(r.Body).Decode(&postCmtReq); err != nil {
 		return
 	}
 
-	cmt, err := h.Service.PostComment(r.Context(), cmt)
+	validate := validator.New()
+	err := validate.Struct(postCmtReq)
+
+	if err != nil {
+		log.Info(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	cmt := commentFromPostCommentRequest(postCmtReq)
+
+	cmt, err = h.Service.PostComment(r.Context(), cmt)
 
 	if err != nil {
 		log.Print(err)
