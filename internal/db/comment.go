@@ -30,7 +30,7 @@ func (d *Database) GetComment(ctx context.Context, uuid string) (comment.Comment
 
 	row := d.Client.QueryRowContext(
 		ctx,
-		`SELECT id, slug, body, author FROM id = $1`,
+		`SELECT id, slug, body, author FROM comments WHERE id = $1`,
 		uuid,
 	)
 
